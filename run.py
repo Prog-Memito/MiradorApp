@@ -1,8 +1,8 @@
-from app import crear_app, db
+from app import create_app
+from views.GastoComunView import gasto_comun_blueprint
 
-app = crear_app()
+app = create_app()
+app.register_blueprint(gasto_comun_blueprint)
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()  # Crear tablas en la base de datos
     app.run(debug=True)

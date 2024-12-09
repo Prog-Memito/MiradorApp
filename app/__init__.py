@@ -16,16 +16,18 @@ class SingletonDB:
         if app is not None:
             db.init_app(app)
 
-def crear_app():
+def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///edificio.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config.from_object('config.Config')
 
-    # Inicializar SQLAlchemy con la aplicación
-    db.init_app(app)
+    SingletonDB(app)  # Singleton instance of DB
 
-    # Importar y registrar el blueprint
-    from views.VistaGastoComun import gastos_comunes_blueprint
-    app.register_blueprint(gastos_comunes_blueprint, url_prefix='/api')
+    with app.app_context():
+        from models import DepartamentoModel, GastoComunModel
+        try:
+            db.create_all()
+            print("Base de datos creada exitosamente")
+        except Exception as e:
+            print(f"Error al crear la base de datos: {e}")
 
     return app
